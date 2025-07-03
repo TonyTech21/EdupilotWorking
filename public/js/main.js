@@ -1,6 +1,9 @@
 // Main JavaScript file for EduControl NG
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize sidebar functionality
+    initializeSidebar();
+    
     // Mobile navigation toggle
     const navToggle = document.getElementById('nav-toggle');
     const navMenu = document.getElementById('nav-menu');
@@ -276,7 +279,86 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    // Activity items animation
+    const activityItems = document.querySelectorAll(".activity-item");
+    const observer = new IntersectionObserver(
+        entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                }
+            });
+        },
+        {
+            threshold: 0.1
+        }
+    );
+
+    activityItems.forEach(item => {
+        observer.observe(item);
+    });
 });
+
+// Sidebar functionality
+function initializeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const body = document.body;
+
+    if (!sidebar || !toggleBtn) return;
+
+    // Initialize sidebar state
+    function initializeSidebarState() {
+        if (window.innerWidth <= 768) {
+            // Mobile: sidebar hidden by default
+            sidebar.classList.add('closed');
+            body.classList.remove('with-sidebar');
+            body.classList.add('sidebar-closed');
+        } else {
+            // Desktop: sidebar visible by default
+            sidebar.classList.remove('closed');
+            body.classList.add('with-sidebar');
+            body.classList.remove('sidebar-closed');
+        }
+    }
+
+    // Toggle sidebar
+    function toggleSidebar() {
+        if (window.innerWidth <= 768) {
+            // Mobile behavior
+            sidebar.classList.toggle('open');
+            sidebar.classList.toggle('closed');
+        } else {
+            // Desktop behavior
+            sidebar.classList.toggle('closed');
+            body.classList.toggle('with-sidebar');
+            body.classList.toggle('sidebar-closed');
+        }
+    }
+
+    // Event listeners
+    toggleBtn.addEventListener('click', toggleSidebar);
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        initializeSidebarState();
+    });
+
+    // Initialize on load
+    initializeSidebarState();
+
+    // Close mobile sidebar when clicking outside
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768 && 
+            !sidebar.contains(e.target) && 
+            !toggleBtn.contains(e.target) && 
+            sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            sidebar.classList.add('closed');
+        }
+    });
+}
 
 // Utility functions
 function showAlert(message, type = 'success') {
@@ -330,55 +412,3 @@ window.EduControl = {
     formatDate,
     debounce
 };
-
-
-  const sidebar = document.getElementById('sidebar');
-  const toggleBtn = document.getElementById('sidebarToggle');
-
-  toggleBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    sidebar.classList.toggle('closed');
-  });
-
-  // Initialize state on page load
-  window.addEventListener('DOMContentLoaded', () => {
-    if (window.innerWidth < 768) {
-      sidebar.classList.add('closed');
-    } else {
-      document.body.classList.add('with-sidebar');
-    }
-  });
-
-  // Optional: Adjust body class based on width
-  window.addEventListener('resize', () => {
-    if (window.innerWidth < 768) {
-      sidebar.classList.add('closed');
-      document.body.classList.remove('with-sidebar');
-    } else {
-      sidebar.classList.remove('closed');
-      document.body.classList.add('with-sidebar');
-    }
-  });
-
- 
-
-document.addEventListener("DOMContentLoaded", () => {
-  const activityItems = document.querySelectorAll(".activity-item");
-
-  const observer = new IntersectionObserver(
-    entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-        }
-      });
-    },
-    {
-      threshold: 0.1
-    }
-  );
-
-  activityItems.forEach(item => {
-    observer.observe(item);
-  });
-});
