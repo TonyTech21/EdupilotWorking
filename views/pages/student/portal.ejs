@@ -1,0 +1,362 @@
+<%- include('../../partials/header') %>
+
+<div class="student-portal">
+    <div class="portal-header">
+  <div class="student-info">
+    <img src="<%= student.passportURL %>" alt="<%= student.fullName %>" class="student-photo-large">
+    <div class="student-details">
+      <h1><span class="wave">👋</span> Welcome, <%= student.fullName %></h1>
+      <p class="student-id">ID: <%= student.studentID %></p>
+      <p class="student-class"><%= student.currentClass %> | <%= student.currentSession %></p>
+    </div>
+  </div>
+
+  <div class="current-term">
+    <% if (activeSession) { %>
+      <span class="term-badge"><%= activeSession.currentTerm %></span>
+    <% } %>
+  </div>
+</div>
+
+    
+    <!-- Login Announcements Popup -->
+    <% if (locals.loginAnnouncements && loginAnnouncements.length > 0) { %>
+        <div id="announcementPopup" class="announcement-popup">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <h3>Latest Announcements</h3>
+                    <button type="button" class="close-popup" onclick="closeAnnouncementPopup()">&times;</button>
+                </div>
+                <div class="popup-body">
+                    <% loginAnnouncements.forEach(announcement => { %>
+                        <div class="announcement-item">
+                            <h4><%= announcement.title %></h4>
+                            <p><%= announcement.content %></p>
+                            <small class="announcement-date">
+                                <%= new Date(announcement.createdAt).toLocaleDateString() %>
+                            </small>
+                        </div>
+                    <% }) %>
+                </div>
+                <div class="popup-footer">
+                    <button type="button" class="btn btn-primary" onclick="closeAnnouncementPopup()">Close</button>
+                </div>
+            </div>
+        </div>
+    <% } %>
+    
+    <div class="portal-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-content">
+                <h3><%= stats.totalSubjects %></h3>
+                <p>Subjects</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-content">
+                <h3><%= stats.averageScore %>%</h3>
+                <p>Average Score</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="stat-content">
+                <h3><%= (stats.gradeDistribution.A || 0) + (stats.gradeDistribution.B || 0) %></h3>
+                <p>A's & B's</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-calculator"></i>
+            </div>
+            <div class="stat-content">
+                <h3><%= stats.totalMarks %></h3>
+                <p>Total Marks</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="portal-content">
+        <!-- Announcements Section -->
+        <% if (announcements && announcements.length > 0) { %>
+            <div class="announcements-section">
+                <h2>School Announcements</h2>
+                <div class="announcements-list">
+                    <% announcements.forEach(announcement => { %>
+                        <div class="announcement-card priority-<%= announcement.priority %>">
+                            <div class="announcement-header">
+                                <h3><%= announcement.title %></h3>
+                                <span class="announcement-priority"><%= announcement.priority %></span>
+                            </div>
+                            <p><%= announcement.content %></p>
+                            <small class="announcement-date">
+                                <%= new Date(announcement.createdAt).toLocaleDateString() %>
+                            </small>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        <% } %>
+        
+        <div class="current-results">
+            <div class="section-header">
+                <h2>Current Term Results</h2>
+                <div class="section-actions">
+                    <a href="/student/results" class="btn btn-outline" style="border: 2px solid #1e293b; color: #1e293b;">View All Results</a>
+                    <% if (currentResults.length > 0) { %>
+                        <a href="/student/results/download?term=<%= activeSession ? activeSession.currentTerm : 'First Term' %>&session=<%= student.currentSession %>" class="btn btn-primary">
+                            <i class="fas fa-download"></i> Download PDF
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+            
+            <% if (currentResults.length > 0) { %>
+                <div class="results-table-container">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>CA1</th>
+                                <th>CA2</th>
+                                <th>Exam</th>
+                                <th>Total</th>
+                                <th>Grade</th>
+                                <th>Remark</th>
+                                <th>Position</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% currentResults.forEach(result => { %>
+                                <tr>
+                                    <td class="subject-name"><%= result.subject %></td>
+                                    <td><%= result.ca1 %></td>
+                                    <td><%= result.ca2 %></td>
+                                    <td><%= result.exam %></td>
+                                    <td class="total-score"><%= result.total %></td>
+                                    <td>
+                                        <span class="grade grade-<%= result.grade.toLowerCase() %>">
+                                            <%= result.grade %>
+                                        </span>
+                                    </td>
+                                    <td class="remark remark-<%= result.remark.toLowerCase().replace(/\s+/g, '-') %>">
+                                        <%= result.remark %>
+                                    </td>
+                                    <td class="position">
+                                        <% if (result.position) { %>
+                                            <%= result.position %>
+                                        <% } else { %>
+                                            -
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="results-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Total Subjects:</span>
+                        <span class="summary-value"><%= stats.totalSubjects %></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Total Marks:</span>
+                        <span class="summary-value"><%= stats.totalMarks %></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Average Score:</span>
+                        <span class="summary-value"><%= stats.averageScore %>%</span>
+                    </div>
+                    <% if (currentResults.length > 0 && currentResults[0].position) { %>
+                        <div class="summary-item">
+                            <span class="summary-label">Class Position:</span>
+                            <span class="summary-value"><%= currentResults[0].position %></span>
+                        </div>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <div class="no-results">
+                    <div class="no-results-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3>Result not yet uploaded</h3>
+                    <p>Your results for the current term have not been published yet.</p>
+                </div>
+            <% } %>
+        </div>
+        
+       
+    </div>
+</div>
+
+<style>
+.announcements-section {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.announcements-section h2 {
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+}
+
+.announcements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.announcement-card {
+    padding: 1rem;
+    border-radius: 0.375rem;
+    border-left: 4px solid #1e293b; /* Default border color */
+}
+
+.announcement-card.priority-low {
+    background: #f9fafb;
+    border-left-color: #6b7280;
+}
+
+.announcement-card.priority-normal {
+    background: #eff6ff;
+    border-left-color: #1e293b;
+}
+
+.announcement-card.priority-high {
+    background: #fffbeb;
+    border-left-color: #f59e0b;
+}
+
+.announcement-card.priority-urgent {
+    background: #fef2f2;
+    border-left-color: #ef4444;
+}
+
+.announcement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.announcement-header h3 {
+    margin: 0;
+    color: #1e293b;
+}
+
+.announcement-priority {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background: #1e293b;
+    color: var(--white);
+    text-transform: uppercase;
+}
+
+.announcement-date {
+    color: var(--secondary-color);
+    font-size: 0.875rem;
+}
+
+.announcement-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-content {
+    background: white;
+    border-radius: 0.5rem;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.popup-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--medium-gray);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popup-body {
+    padding: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.popup-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--medium-gray);
+    text-align: center;
+}
+
+.close-popup {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--secondary-color);
+}
+
+.announcement-item {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.announcement-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.announcement-item h4 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.position {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+</style>
+
+<script>
+function closeAnnouncementPopup() {
+    document.getElementById('announcementPopup').style.display = 'none';
+}
+
+// Auto-close popup after 30 seconds
+setTimeout(function() {
+    const popup = document.getElementById('announcementPopup');
+    if (popup) {
+        popup.style.display = 'none';
+    }
+}, 30000);
+</script>
+
+<%- include('../../partials/footer') %>

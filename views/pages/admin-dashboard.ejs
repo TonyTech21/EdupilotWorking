@@ -1,0 +1,110 @@
+<%- include('../partials/header') %>
+
+<div class="dashboard-layout">
+   
+
+    <main class="dashboard expanded" id="dashboardMain">
+        <div class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <div class="session-info">
+                <% if (locals.currentSession) { %>
+                    <span class="session-badge">
+                        <%= currentSession.sessionName %> - <%= currentSession.currentTerm %>
+                    </span>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <% const cards = [
+                { icon: 'fa-users', label: 'Total Students', value: stats?.totalStudents || 0 },
+                { icon: 'fa-chalkboard-teacher', label: 'Teachers', value: stats?.totalTeachers || 0 },
+                { icon: 'fa-user-shield', label: 'Result Officers', value: stats?.totalOfficers || 0 },
+                { icon: 'fa-check-circle', label: 'Approved Results', value: stats?.publishedResults || 0 },
+                { icon: 'fa-clock', label: 'Pending Results', value: stats?.unpublishedResults || 0 },
+            ]; %>
+
+            <% cards.forEach(card => { %>
+                <div class="stat-card animate">
+                    <div class="stat-icon">
+                        <i class="fas <%= card.icon %>"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= card.value %></h3>
+                        <p><%= card.label %></p>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="dashboard-section">
+                <h2>Quick Actions</h2>
+                <div class="quick-actions">
+                    <% const actions = [
+                        { link: '/admin/students/add', icon: 'fa-user-plus', text: 'Add Student' },
+                        { link: '/admin/staff/add', icon: 'fa-user-tie', text: 'Add Staff' },
+                        { link: '/admin/classes/add', icon: 'fa-plus-circle', text: 'Add Class' },
+                        { link: '/admin/score-entry', icon: 'fa-edit', text: 'Score Entry' },
+                        { link: '/result/approve', icon: 'fa-check-double', text: 'Approve Results' },
+                        { link: '/analytics/performance-analytics', icon: 'fa-chart-bar', text: 'Performance Analytics' },
+                        { link: '/admin/post-practice-question', icon: 'fa-question-circle', text: 'Post Practice Question' },
+                        { link: '/admin/promote', icon: 'fa-level-up-alt', text: 'Promote Students' },
+                        { link: '/admin/passed-out-students', icon: 'fa-graduation-cap', text: 'Passed Out Students' },
+                        { link: '/admin/announcements', icon: 'fa-bullhorn', text: 'Announcements' },
+                        { link: '/admin/school', icon: 'fa-cog', text: 'School Settings' },
+                    ]; %>
+
+                    <% actions.forEach(action => { %>
+                        <a href="<%= action.link %>" class="action-card">
+                            <i class="fas <%= action.icon %>"></i>
+                            <span><%= action.text %></span>
+                        </a>
+                    <% }) %>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h2>Students by Class</h2>
+                <div class="class-distribution">
+                    <% if (stats?.studentsByClass?.length) { %>
+                        <% stats.studentsByClass.forEach(classData => { %>
+                            <div class="class-item">
+                                <span class="class-name"><%= classData._id %></span>
+                                <span class="class-count"><%= classData.count %> students</span>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p>No student data available</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h2>Recent Activities</h2>
+                <div class="recent-activities">
+                    <% if (stats?.recentResults?.length) { %>
+                        <% stats.recentResults.forEach(result => { %>
+                            <div class="activity-item">
+                                <div class="activity-icon"><i class="fas fa-edit"></i></div>
+                                <div class="activity-content">
+                                    <p><strong><%= result.studentName %></strong> - <%= result.subject %></p>
+                                    <small><%= result.className %> | <%= result.term %>, <%= result.session %></small>
+                                </div>
+                                <div class="activity-time">
+                                    <%= new Date(result.enteredAt).toLocaleDateString() %>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p>No recent activities</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+
+<%- include('../partials/footer') %>

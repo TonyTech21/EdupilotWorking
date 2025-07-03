@@ -1,0 +1,409 @@
+<%- include('../../partials/header') %>
+
+<div class="page-content">
+    <div class="page-header">
+        <h1>Approve Results</h1>
+        <div class="bulk-actions" style="display: none;">
+            <button type="button" id="approveSelected" class="btn btn-success">
+                <i class="fas fa-check-double"></i> Approve Selected
+            </button>
+        </div>
+    </div>
+    
+    <% if (locals.query && query.success) { %>
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <%= query.success %>
+        </div>
+    <% } %>
+    
+    <% if (locals.query && query.error) { %>
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <%= query.error %>
+        </div>
+    <% } %>
+    
+    <div class="filters">
+        <form method="GET" action="/result/approve" class="filter-form">
+            <div class="filter-group">
+                <label for="class">Class:</label>
+                <select name="class" id="class">
+                    <option value="">All Classes</option>
+                    <% classes.forEach(className => { %>
+                        <option value="<%= className %>" <%= query.class === className ? 'selected' : '' %>>
+                            <%= className %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="subject">Subject:</label>
+                <select name="subject" id="subject">
+                    <option value="">All Subjects</option>
+                    <% subjects.forEach(subject => { %>
+                        <option value="<%= subject %>" <%= query.subject === subject ? 'selected' : '' %>>
+                            <%= subject %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="term">Term:</label>
+                <select name="term" id="term">
+                    <option value="">All Terms</option>
+                    <% terms.forEach(term => { %>
+                        <option value="<%= term %>" <%= query.term === term ? 'selected' : '' %>>
+                            <%= term %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="session">Session:</label>
+                <select name="session" id="session">
+                    <option value="">All Sessions</option>
+                    <% sessions.forEach(session => { %>
+                        <option value="<%= session %>" <%= query.session === session ? 'selected' : '' %>>
+                            <%= session %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-secondary" style="background-color: #1e293b;">Filter</button>
+            <a href="/result/approve" class="btn btn-outline" style="border: 2px solid #1e293b; color: #1e293b; height: 40px;">Clear</a>
+             <a href="/result/published" class="btn btn-secondary" style="background-color: #1e293b;">Published Results</a>
+        </form>
+    </div>
+    
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="selectAll">
+                    </th>
+                    <th>Student Name</th>
+                    <th>Student ID</th>
+                    <th>Class</th>
+                    <th>Subject</th>
+                    <th>Term</th>
+                    <th>Session</th>
+                    <th>CA1 (15)</th>
+                    <th>CA2 (15)</th>
+                    <th>Exam (70)</th>
+                    <th>Total</th>
+                    <th>Grade</th>
+                    <th>Remark</th>
+                    <th>Status</th>
+                    <th>Entered By</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (results && results.length > 0) { %>
+                    <% results.forEach(result => { %>
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="row-checkbox" value="<%= result._id %>">
+                            </td>
+                            <td><%= result.studentName %></td>
+                            <td><%= result.studentID %></td>
+                            <td><%= result.className %></td>
+                            <td><%= result.subject %></td>
+                            <td><%= result.term %></td>
+                            <td><%= result.session %></td>
+                            <td><%= result.ca1 %></td>
+                            <td><%= result.ca2 %></td>
+                            <td><%= result.exam %></td>
+                            <td class="total-score"><%= result.total %></td>
+                            <td>
+                                <span class="grade grade-<%= result.grade.toLowerCase() %>">
+                                    <%= result.grade %>
+                                </span>
+                            </td>
+                            <td class="remark remark-<%= result.remark.toLowerCase().replace(/\s+/g, '-') %>">
+                                <%= result.remark %>
+                            </td>
+                            <td>
+                                <span class="status-badge status-<%= result.status %>">
+                                    <%= result.status.charAt(0).toUpperCase() + result.status.slice(1) %>
+                                </span>
+                            </td>
+                            <td><%= result.enteredBy %></td>
+                            <td class="actions">
+                                <button type="button" class="btn btn-sm btn-success approve-btn" data-id="<%= result._id %>">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="16" class="text-center">No results pending approval</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+    
+    <% if (totalPages > 1) { %>
+        <div class="pagination">
+            <% if (currentPage > 1) { %>
+                <a href="?page=<%= currentPage - 1 %><%= query ? '&' + new URLSearchParams(query).toString() : '' %>" class="btn btn-outline">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+            <% } %>
+            
+            <span class="page-info">
+                Page <%= currentPage %> of <%= totalPages %>
+            </span>
+            
+            <% if (currentPage < totalPages) { %>
+                <a href="?page=<%= currentPage + 1 %><%= query ? '&' + new URLSearchParams(query).toString() : '' %>" class="btn btn-outline">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            <% } %>
+        </div>
+    <% } %>
+</div>
+
+<style>
+.grade {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: bold;
+    font-size: 0.875rem;
+}
+
+.grade-a1 { background: #d1fae5; color: #065f46; }
+.grade-b2, .grade-b3 { background: #dbeafe; color: #1e40af; }
+.grade-c4, .grade-c5, .grade-c6 { background: #fef3c7; color: #92400e; }
+.grade-d7 { background: #fed7aa; color: #9a3412; }
+.grade-e8 { background: #fecaca; color: #991b1b; }
+.grade-f9 { background: #fee2e2; color: #991b1b; }
+
+.remark {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.remark-excellent { color: #065f46; }
+.remark-very-good { color: #1e40af; }
+.remark-good { color: #059669; }
+.remark-credit { color: #92400e; }
+.remark-pass { color: #9a3412; }
+.remark-fail { color: #991b1b; }
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-sent {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.total-score {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.bulk-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.approve-btn {
+    transition: all 0.2s;
+}
+
+.approve-btn:hover {
+    transform: translateY(-1px);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    const bulkActions = document.querySelector('.bulk-actions');
+    const approveSelectedBtn = document.getElementById('approveSelected');
+    
+    // Select all functionality
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            rowCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateBulkActions();
+        });
+    }
+    
+    // Individual checkbox change
+    rowCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateSelectAllState();
+            updateBulkActions();
+        });
+    });
+    
+    function updateSelectAllState() {
+        const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
+        const totalBoxes = document.querySelectorAll('.row-checkbox');
+        
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = checkedBoxes.length === totalBoxes.length && totalBoxes.length > 0;
+            selectAllCheckbox.indeterminate = checkedBoxes.length > 0 && checkedBoxes.length < totalBoxes.length;
+        }
+    }
+    
+    function updateBulkActions() {
+        const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
+        if (bulkActions) {
+            bulkActions.style.display = checkedBoxes.length > 0 ? 'flex' : 'none';
+        }
+    }
+    
+    // Individual approve buttons
+    document.querySelectorAll('.approve-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const resultId = this.dataset.id;
+            approveResult(resultId, this);
+        });
+    });
+    
+    // Bulk approve
+    if (approveSelectedBtn) {
+        approveSelectedBtn.addEventListener('click', function() {
+            const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
+            const resultIds = Array.from(checkedBoxes).map(cb => cb.value);
+            
+            if (resultIds.length === 0) {
+                alert('Please select results to approve');
+                return;
+            }
+            
+            if (confirm(`Are you sure you want to approve ${resultIds.length} result(s)? This will also calculate class positions.`)) {
+                approveMultipleResults(resultIds);
+            }
+        });
+    }
+    
+    function approveResult(resultId, button) {
+        if (!confirm('Are you sure you want to approve this result? This will also calculate class positions.')) {
+            return;
+        }
+        
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Approving...';
+        
+        fetch(`/result/approve/${resultId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the row from the table
+                button.closest('tr').remove();
+                showAlert('Result approved successfully and positions calculated', 'success');
+                
+                // Update counts
+                updateResultCounts();
+            } else {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-check"></i> Approve';
+                showAlert('Error: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-check"></i> Approve';
+            showAlert('An error occurred while approving the result', 'error');
+        });
+    }
+    
+    function approveMultipleResults(resultIds) {
+        approveSelectedBtn.disabled = true;
+        approveSelectedBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Approving...';
+        
+        fetch('/result/approve-multiple', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ resultIds })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove approved rows
+                resultIds.forEach(id => {
+                    const checkbox = document.querySelector(`.row-checkbox[value="${id}"]`);
+                    if (checkbox) {
+                        checkbox.closest('tr').remove();
+                    }
+                });
+                
+                showAlert(data.message + ' and positions calculated', 'success');
+                updateBulkActions();
+                updateSelectAllState();
+                updateResultCounts();
+            } else {
+                showAlert('Error: ' + data.message, 'error');
+            }
+            
+            approveSelectedBtn.disabled = false;
+            approveSelectedBtn.innerHTML = '<i class="fas fa-check-double"></i> Approve Selected';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('An error occurred while approving results', 'error');
+            approveSelectedBtn.disabled = false;
+            approveSelectedBtn.innerHTML = '<i class="fas fa-check-double"></i> Approve Selected';
+        });
+    }
+    
+    function updateResultCounts() {
+        const remainingRows = document.querySelectorAll('.data-table tbody tr:not(.no-results)').length;
+        if (remainingRows === 0) {
+            const tbody = document.querySelector('.data-table tbody');
+            tbody.innerHTML = '<tr class="no-results"><td colspan="16" class="text-center">No results pending approval</td></tr>';
+            if (bulkActions) {
+                bulkActions.style.display = 'none';
+            }
+        }
+    }
+    
+    function showAlert(message, type) {
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type}`;
+        alert.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+            ${message}
+        `;
+        
+        const pageContent = document.querySelector('.page-content');
+        pageContent.insertBefore(alert, pageContent.firstChild);
+        
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        }, 5000);
+    }
+});
+</script>
+
+<%- include('../../partials/footer') %>

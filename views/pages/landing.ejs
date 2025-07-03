@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="landing-page">
+    <!-- Top Tiny Nav -->
+    <div class="top-tiny-nav">
+        <div class="container">
+            <div class="phone">
+                <i class="fas fa-phone"></i>
+                <span><%= school && school.phone ? school.phone : '+234-XXX-XXX-XXXX' %></span>
+            </div>
+            <div class="social-icons">
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Top Bar -->
+    <div class="main-top-bar">
+        <div class="container">
+            <div class="logo">
+                <img src="<%= school && school.logo ? school.logo : '/images/default-logo.png' %>" alt="School Logo">
+                <h1><%= school ? school.name : 'Your School Name' %></h1>
+            </div>
+            <div class="contact-actions">
+                <a href="tel:<%= school && school.phone ? school.phone : '+234XXXXXXXXXX' %>" class="contact-btn">
+                    <i class="fas fa-phone"></i> Call Now
+                </a>
+                <a href="#contact" class="contact-btn">
+                    <i class="fas fa-map-marker-alt"></i> Our Location
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Navigation -->
+    <nav class="sticky-nav">
+        <div class="container">
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#admission">Admission</a></li>
+                <li><a href="#facilities">Our Facilities</a></li>
+                <li><a href="/login">Portal/Admin</a></li>
+                <li><a href="#programme">Our Programme</a></li>
+                <li><a href="#staff">Our Staff</a></li>
+                <li><a href="#gallery">Events & Gallery</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-carousel">
+            <div class="hero-slide active" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.pexels.com/photos/289740/pexels-photo-289740.jpeg');">
+                <div class="hero-content">
+                    <h1>Welcome to <%= school ? school.name : 'Your School Name' %></h1>
+                    <p>Excellence in Education</p>
+                    <div class="hero-cta">
+                        <a href="/login" class="btn">
+                            <i class="fas fa-sign-in-alt"></i> Access Portal
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-slide" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.pexels.com/photos/1370296/pexels-photo-1370296.jpeg');">
+                <div class="hero-content">
+                    <h1>Where Future Leaders are Raised</h1>
+                    <p>Nurturing Excellence, Building Character</p>
+                    <div class="hero-cta">
+                        <a href="#about" class="btn">
+                            <i class="fas fa-info-circle"></i> Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-slide" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.pexels.com/photos/1720186/pexels-photo-1720186.jpeg');">
+                <div class="hero-content">
+                    <h1>Excellence in Academics & Morals</h1>
+                    <p>Preparing Students for Tomorrow's Challenges</p>
+                    <div class="hero-cta">
+                        <a href="#admission" class="btn">
+                            <i class="fas fa-graduation-cap"></i> Apply Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safe Learning Environment Section -->
+    <section id="about" class="main-section">
+        <div class="section-content">
+            <h2>We Provide Safe & Conducive Learning Environment</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; align-items: center;">
+                <div>
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: #64748b; margin-bottom: 1.5rem;">
+                        <%= school && school.about ? school.about : 'We are committed to providing quality education that prepares students for success in their academic and personal lives. Our dedicated faculty and modern facilities create an environment where every student can thrive.' %>
+                    </p>
+                    <% if (school && school.mission) { %>
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 1rem; border-left: 4px solid #38bdf8;">
+                            <h3 style="color: #1e293b; margin-bottom: 1rem;">Our Mission</h3>
+                            <p style="color: #64748b; margin: 0;"><%= school.mission %></p>
+                        </div>
+                    <% } %>
+                </div>
+                <div style="text-align: center;">
+                    <img src="https://images.pexels.com/photos/1720186/pexels-photo-1720186.jpeg" alt="Students Learning" style="width: 100%; max-width: 400px; border-radius: 1rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Facilities Section -->
+    <section id="facilities" class="main-section">
+        <div class="section-content">
+            <h2>A Glance Through Our Facilities</h2>
+            <div class="facilities-grid">
+                <div class="facility-card">
+                    <div class="icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3>Modern Library</h3>
+                    <p>Well-stocked library with thousands of books, digital resources, and quiet study areas for research and learning.</p>
+                </div>
+                <div class="facility-card">
+                    <div class="icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3>Science Laboratories</h3>
+                    <p>Fully equipped laboratories for Physics, Chemistry, and Biology with modern equipment and safety measures.</p>
+                </div>
+                <div class="facility-card">
+                    <div class="icon">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <h3>Computer Lab</h3>
+                    <p>State-of-the-art computer laboratory with high-speed internet and latest software for digital literacy.</p>
+                </div>
+                <div class="facility-card">
+                    <div class="icon">
+                        <i class="fas fa-running"></i>
+                    </div>
+                    <h3>Sports Complex</h3>
+                    <p>Comprehensive sports facilities including football field, basketball court, and indoor games for physical development.</p>
+                </div>
+                <div class="facility-card">
+                    <div class="icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3>Cafeteria</h3>
+                    <p>Clean and hygienic cafeteria serving nutritious meals and snacks to keep students energized throughout the day.</p>
+                </div>
+                <div class="facility-card">
+                    <div class="icon">
+                        <i class="fas fa-bus"></i>
+                    </div>
+                    <h3>Transportation</h3>
+                    <p>Safe and reliable school bus service covering major routes in the city for convenient student transportation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events & Gallery Section -->
+    <section id="gallery" class="main-section">
+        <div class="section-content">
+            <h2>Events & Gallery</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/1370296/pexels-photo-1370296.jpeg" alt="School Event">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/289740/pexels-photo-289740.jpeg" alt="Classroom">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/1720186/pexels-photo-1720186.jpeg" alt="Students">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/1181534/pexels-photo-1181534.jpeg" alt="Science Lab">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/1181345/pexels-photo-1181345.jpeg" alt="Library">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/1181533/pexels-photo-1181533.jpeg" alt="Sports">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest News Section -->
+    <section class="main-section">
+        <div class="section-content">
+            <h2>Latest News</h2>
+            <div class="news-grid">
+                <% if (announcements && announcements.length > 0) { %>
+                    <% announcements.forEach(announcement => { %>
+                        <div class="news-card">
+                            <div class="news-image"></div>
+                            <div class="news-content">
+                                <div class="news-date"><%= new Date(announcement.createdAt).toLocaleDateString() %></div>
+                                <h3><%= announcement.title %></h3>
+                                <p><%= announcement.content.substring(0, 150) %>...</p>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="news-card">
+                        <div class="news-image"></div>
+                        <div class="news-content">
+                            <div class="news-date">Recent</div>
+                            <h3>Welcome to New Academic Session</h3>
+                            <p>We are excited to welcome all students to the new academic session. Registration is now open for new admissions.</p>
+                        </div>
+                    </div>
+                    <div class="news-card">
+                        <div class="news-image"></div>
+                        <div class="news-content">
+                            <div class="news-date">This Week</div>
+                            <h3>Inter-House Sports Competition</h3>
+                            <p>Annual inter-house sports competition will be held next month. Students are encouraged to participate in various sporting events.</p>
+                        </div>
+                    </div>
+                    <div class="news-card">
+                        <div class="news-image"></div>
+                        <div class="news-content">
+                            <div class="news-date">Upcoming</div>
+                            <h3>Parent-Teacher Conference</h3>
+                            <p>Join us for the quarterly parent-teacher conference to discuss your child's academic progress and development.</p>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="landing-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <img src="<%= school && school.logo ? school.logo : '/images/default-logo.png' %>" alt="School Logo" style="width: 50px; height: 50px; border-radius: 50%;">
+                        <h3><%= school ? school.name : 'Your School Name' %></h3>
+                    </div>
+                    <p><%= school && school.motto ? school.motto : 'Excellence in Education' %></p>
+                    <% if (school && school.vision) { %>
+                        <p><%= school.vision %></p>
+                    <% } %>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact Information</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> <%= school && school.address ? school.address : 'School Address Here' %></p>
+                    <p><i class="fas fa-phone"></i> <%= school && school.phone ? school.phone : '+234-XXX-XXX-XXXX' %></p>
+                    <p><i class="fas fa-envelope"></i> <%= school && school.email ? school.email : 'info@school.edu.ng' %></p>
+                    <% if (school && school.website) { %>
+                        <p><i class="fas fa-globe"></i> <%= school.website %></p>
+                    <% } %>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <p><a href="#about">About Us</a></p>
+                    <p><a href="#admission">Admission</a></p>
+                    <p><a href="#facilities">Facilities</a></p>
+                    <p><a href="/login">Student Portal</a></p>
+                    <p><a href="/login">Staff Portal</a></p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <a href="#" style="font-size: 1.5rem;"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="font-size: 1.5rem;"><i class="fab fa-instagram"></i></a>
+                        <a href="#" style="font-size: 1.5rem;"><i class="fab fa-twitter"></i></a>
+                        <a href="#" style="font-size: 1.5rem;"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 <%= school ? school.name : 'Your School Name' %>. All rights reserved. | Powered by EduPilot NG</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Hero Carousel
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+        
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+        
+        // Auto-advance slides every 5 seconds
+        setInterval(nextSlide, 5000);
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all facility cards and news cards
+        document.querySelectorAll('.facility-card, .news-card, .gallery-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

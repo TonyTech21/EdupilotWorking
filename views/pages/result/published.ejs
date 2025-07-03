@@ -1,0 +1,265 @@
+<%- include('../../partials/header') %>
+
+<div class="page-content">
+    <div class="page-header">
+        <h1>Published Results</h1>
+        <div class="page-actions">
+            <a href="/result/approve" class="btn btn-outline" style="border: 2px solid #1e293b; color: #1e293b;">
+                <i class="fas fa-clock"></i> Pending Approval
+            </a>
+        </div>
+    </div>
+    
+    <div class="filters">
+        <form method="GET" action="/result/published" class="filter-form">
+            <div class="filter-group">
+                <label for="class">Class:</label>
+                <select name="class" id="class">
+                    <option value="">All Classes</option>
+                    <% classes.forEach(className => { %>
+                        <option value="<%= className %>" <%= query.class === className ? 'selected' : '' %>>
+                            <%= className %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="subject">Subject:</label>
+                <select name="subject" id="subject">
+                    <option value="">All Subjects</option>
+                    <% subjects.forEach(subject => { %>
+                        <option value="<%= subject %>" <%= query.subject === subject ? 'selected' : '' %>>
+                            <%= subject %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="term">Term:</label>
+                <select name="term" id="term">
+                    <option value="">All Terms</option>
+                    <% terms.forEach(term => { %>
+                        <option value="<%= term %>" <%= query.term === term ? 'selected' : '' %>>
+                            <%= term %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="session">Session:</label>
+                <select name="session" id="session">
+                    <option value="">All Sessions</option>
+                    <% sessions.forEach(session => { %>
+                        <option value="<%= session %>" <%= query.session === session ? 'selected' : '' %>>
+                            <%= session %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-secondary" style="background-color: #1e293b;">Filter</button>
+            <a href="/result/published" class="btn btn-outline" style="border: 2px solid #1e293b; color: #1e293b; height: 40px;">Clear</a>
+        </form>
+    </div>
+    
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Student ID</th>
+                    <th>Class</th>
+                    <th>Subject</th>
+                    <th>Term</th>
+                    <th>Session</th>
+                    <th>CA1</th>
+                    <th>CA2</th>
+                    <th>Exam</th>
+                    <th>Total</th>
+                    <th>Grade</th>
+                    <th>Position</th>
+                    <th>Published By</th>
+                    <th>Published Date</th>
+                    <% if (user.role === 'admin') { %>
+                        <th>Actions</th>
+                    <% } %>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (results && results.length > 0) { %>
+                    <% results.forEach(result => { %>
+                        <tr>
+                            <td><%= result.studentName %></td>
+                            <td><%= result.studentID %></td>
+                            <td><%= result.className %></td>
+                            <td><%= result.subject %></td>
+                            <td><%= result.term %></td>
+                            <td><%= result.session %></td>
+                            <td><%= result.ca1 %></td>
+                            <td><%= result.ca2 %></td>
+                            <td><%= result.exam %></td>
+                            <td class="total-score"><%= result.total %></td>
+                            <td>
+                                <span class="grade grade-<%= result.grade.toLowerCase() %>">
+                                    <%= result.grade %>
+                                </span>
+                            </td>
+                            <td class="position">
+                                <% if (result.position) { %>
+                                    <%= result.position %>
+                                <% } else { %>
+                                    -
+                                <% } %>
+                            </td>
+                            <td><%= result.publishedBy %></td>
+                            <td><%= new Date(result.publishedAt).toLocaleDateString() %></td>
+                            <% if (user.role === 'admin') { %>
+                                <td class="actions">
+                                    <button type="button" class="btn btn-sm btn-warning unpublish-btn" data-id="<%= result._id %>">
+                                        <i class="fas fa-undo"></i> Unpublish
+                                    </button>
+                                </td>
+                            <% } %>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="<%= user.role === 'admin' ? '15' : '14' %>" class="text-center">No published results found</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+    
+    <% if (totalPages > 1) { %>
+        <div class="pagination">
+            <% if (currentPage > 1) { %>
+                <a href="?page=<%= currentPage - 1 %><%= query ? '&' + new URLSearchParams(query).toString() : '' %>" class="btn btn-outline">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+            <% } %>
+            
+            <span class="page-info">
+                Page <%= currentPage %> of <%= totalPages %>
+            </span>
+            
+            <% if (currentPage < totalPages) { %>
+                <a href="?page=<%= currentPage + 1 %><%= query ? '&' + new URLSearchParams(query).toString() : '' %>" class="btn btn-outline">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            <% } %>
+        </div>
+    <% } %>
+</div>
+
+<style>
+.grade {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: bold;
+    font-size: 0.875rem;
+}
+
+.grade-a { background: #d1fae5; color: #065f46; }
+.grade-b { background: #dbeafe; color: #1e40af; }
+.grade-c { background: #fef3c7; color: #92400e; }
+.grade-d { background: #fed7aa; color: #9a3412; }
+.grade-e { background: #fecaca; color: #991b1b; }
+.grade-f { background: #fee2e2; color: #991b1b; }
+
+.total-score {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.position {
+    font-weight: bold;
+    color: var(--success-color);
+}
+
+.page-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.unpublish-btn {
+    transition: all 0.2s;
+}
+
+.unpublish-btn:hover {
+    transform: translateY(-1px);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Unpublish functionality (admin only)
+    document.querySelectorAll('.unpublish-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const resultId = this.dataset.id;
+            
+            if (!confirm('Are you sure you want to unpublish this result? Students will no longer be able to see it and positions will be recalculated.')) {
+                return;
+            }
+            
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Unpublishing...';
+            
+            fetch(`/result/unpublish/${resultId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the row from the table
+                    this.closest('tr').remove();
+                    showAlert('Result unpublished successfully and positions recalculated', 'success');
+                    
+                    // Check if table is empty
+                    const remainingRows = document.querySelectorAll('.data-table tbody tr:not(.no-results)').length;
+                    if (remainingRows === 0) {
+                        const tbody = document.querySelector('.data-table tbody');
+                        const colspan = document.querySelector('.data-table thead tr').children.length;
+                        tbody.innerHTML = `<tr class="no-results"><td colspan="${colspan}" class="text-center">No published results found</td></tr>`;
+                    }
+                } else {
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-undo"></i> Unpublish';
+                    showAlert('Error: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-undo"></i> Unpublish';
+                showAlert('An error occurred while unpublishing the result', 'error');
+            });
+        });
+    });
+    
+    function showAlert(message, type) {
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type}`;
+        alert.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+            ${message}
+        `;
+        
+        const pageContent = document.querySelector('.page-content');
+        pageContent.insertBefore(alert, pageContent.firstChild);
+        
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        }, 5000);
+    }
+});
+</script>
+
+<%- include('../../partials/footer') %>
